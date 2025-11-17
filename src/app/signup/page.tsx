@@ -1,9 +1,25 @@
 "use client"
 import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
+import axios from "axios"
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
+  const [userName, setUserName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const router = useRouter()
+
+  const handleRegister = async (e:React.FormEvent)=>{
+  e.preventDefault()  
+  try {
+    const res = await axios.post("/api/auth/register",{userName, email, password})
+    console.log(res)
+  } catch (error) {
+    console.log(error)
+  }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-100 to-gray-50 p-6">
@@ -12,10 +28,12 @@ export default function Signup() {
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-2">Create your account</h2>
           <p className="text-sm text-gray-500 mb-6">Join us — just a few details and you’re in.</p>
 
-          <form className="space-y-4">
+          <form onSubmit={(e)=> handleRegister(e)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="username">Username</label>
               <input
+                onChange={(e)=> setUserName(e.target.value)}
+                value={userName}
                 id="username"
                 name="username"
                 type="text"
@@ -27,6 +45,8 @@ export default function Signup() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
               <input
+                onChange={(e)=> setEmail(e.target.value)}
+                value={email}
                 id="email"
                 name="email"
                 type="email"
@@ -48,6 +68,8 @@ export default function Signup() {
               </div>
 
               <input
+                value={password}
+                onChange={(e)=> setPassword(e.target.value)}
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -84,7 +106,7 @@ export default function Signup() {
           </form>
         </div>
 
-        <div className="bg-gray-50 p-4 text-center text-sm text-gray-600">Already have an account? <a href="#" className="text-indigo-600 font-medium">Sign in</a></div>
+        <div className="bg-gray-50 p-4 text-center text-sm text-gray-600">Already have an account? <a onClick={()=> router.push("/login")} className="text-indigo-600 font-medium cursor-pointer">Sign in</a></div>
       </div>
     </div>
   );

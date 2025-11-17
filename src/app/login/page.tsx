@@ -4,6 +4,8 @@ import { FaGoogle } from "react-icons/fa";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-gray-100 to-gray-50 p-6">
@@ -16,6 +18,8 @@ export default function Login() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
               <input
+                value={email}
+                onChange={(e)=> setEmail(e.target.value)}
                 id="email"
                 name="email"
                 type="email"
@@ -37,6 +41,8 @@ export default function Login() {
               </div>
 
               <input
+                value={password}
+                onChange={(e)=> setPassword(e.target.value)}
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
