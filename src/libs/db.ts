@@ -5,7 +5,7 @@ if(!databaseUrl){
      throw new Error("data base url is not found")
 }
 
-let cached = global.mongoose
+let cached = global.mongoose;
 
 if(!cached){
     cached = global.mongoose = {conn: null, promise: null}
