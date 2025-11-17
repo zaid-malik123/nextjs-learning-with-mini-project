@@ -1,4 +1,5 @@
 "use client"
+import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 
@@ -6,6 +7,17 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const handleLogin = (e:React.FormEvent)=>{
+    e.preventDefault()
+    try {
+       signIn("credentials", {
+        email,
+        password
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-gray-100 to-gray-50 p-6">
@@ -14,7 +26,7 @@ export default function Login() {
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-2">Welcome back</h2>
           <p className="text-sm text-gray-500 mb-6">Log in to your account</p>
 
-          <form className="space-y-4">
+          <form onSubmit={(e)=> handleLogin(e)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email</label>
               <input
