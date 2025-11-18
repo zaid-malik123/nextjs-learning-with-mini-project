@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -20,6 +20,13 @@ export default function Home() {
       reader.readAsDataURL(file);
     }
   };
+  const handleSignOut = async ()=>{
+    try {
+      await signOut()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-indigo-50 via-white to-indigo-100 p-6">
@@ -114,7 +121,7 @@ export default function Home() {
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <button className="w-full bg-red-600 text-white py-3 rounded-lg font-medium red:bg-indigo-700 transition">
+              <button onClick={handleSignOut} className="w-full bg-red-600 text-white py-3 rounded-lg font-medium red:bg-indigo-700 transition">
                 LogOut
               </button>
               <button className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition">
