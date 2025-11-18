@@ -1,5 +1,6 @@
 "use client"
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 
@@ -7,13 +8,17 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
+  const router = useRouter()
   const handleLogin = (e:React.FormEvent)=>{
     e.preventDefault()
     try {
        signIn("credentials", {
         email,
-        password
+        password,
+        redirect: false
       })
+      router.push("/")
     } catch (error) {
       console.log(error)
     }
@@ -80,6 +85,9 @@ export default function Login() {
             </div>
 
             <button
+              onClick={()=> {signIn("google", {
+                callbackUrl: "/"
+              })}}
               type="button"
               className="w-full inline-flex items-center justify-center gap-3 px-4 py-2 rounded-lg border border-gray-200 bg-white hover:shadow-sm focus:outline-none transition"
             >
@@ -92,7 +100,7 @@ export default function Login() {
         </div>
 
         <div className="bg-gray-50 p-4 text-center text-sm text-gray-600">
-          Don&apos;t have an account? <a href="#" className="text-indigo-600 font-medium">Sign up</a>
+          Don&apos;t have an account? <a onClick={()=> router.push("/signup")} className="text-indigo-600 font-medium">Sign up</a>
         </div>
       </div>
     </div>

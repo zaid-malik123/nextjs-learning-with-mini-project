@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import axios from "axios"
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +16,7 @@ export default function Signup() {
   e.preventDefault()  
   try {
     const res = await axios.post("/api/auth/register",{userName, email, password})
-    console.log(res)
+    router.push("/")
   } catch (error) {
     console.log(error)
   }
@@ -95,7 +96,9 @@ export default function Signup() {
             </div>
 
             <button
-              type="button"
+              onClick={()=> signIn("google", {
+                callbackUrl: "/"
+              })}
               className="w-full inline-flex items-center justify-center gap-3 px-4 py-2 rounded-lg border border-gray-200 bg-white hover:shadow-sm focus:outline-none transition"
             >
               <FaGoogle className="h-5 w-5" />
