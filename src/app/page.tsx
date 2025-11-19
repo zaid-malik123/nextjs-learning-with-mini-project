@@ -3,6 +3,7 @@
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
+import axios from "axios"
 
 export default function Home() {
   const { data: session } = useSession();
@@ -30,6 +31,19 @@ export default function Home() {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const handleSubmitProfile = async ()=>{
+  try {
+    const formData = new FormData()
+    if(backendImage){
+      formData.append("file", backendImage )
+    }
+    const res = await axios.post("/api/edit", formData)
+    console.log(res)
+  } catch (error) {
+    console.log(error)
+  } 
   }
 
   return (
@@ -128,8 +142,8 @@ export default function Home() {
               <button onClick={handleSignOut} className="w-full bg-red-600 text-white py-3 rounded-lg font-medium red:bg-indigo-700 transition">
                 LogOut
               </button>
-              <button className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition">
-                View Settings
+              <button onClick={handleSubmitProfile} className="w-full bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition">
+                Save
               </button>
             </div>
           </div>
