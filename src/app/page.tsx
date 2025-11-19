@@ -2,15 +2,21 @@
 
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { useState } from "react";
-import axios from "axios"
+import { useState, useContext } from "react";
+import axios from "axios";
+import { userDataContext } from "@/context/UserContext";
 
 export default function Home() {
   const { data: session } = useSession();
-  const [profileImage, setProfileImage] = useState<string | null>(
-    session?.user?.image || null
+  const userCtx = useContext(userDataContext);
+  const [profileImage, setProfileImage] = useState<string | null>(() =>
+    userCtx?.user?.image ?? session?.user?.image ?? null
   );
-  const [backendImage, setBackendImage] = useState<File | null>(null)
+ 
+  const [backendImage, setBackendImage] = useState<File | null>(null);
+
+  // current candidate image to show (profileImage state preferred, then context)
+  const imageSrc = (profileImage ?? userCtx?.user?.image) as string | undefined;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,7 +46,15 @@ export default function Home() {
       formData.append("file", backendImage )
     }
     const res = await axios.post("/api/edit", formData)
-    console.log(res)
+    // Assume the API returns the updated user object (with `image` field)
+    const updatedUser = res.data;
+    if (updatedUser?.image) {
+      // add a cache-busting param so the browser fetches the fresh image
+      setProfileImage(`${updatedUser.image}?t=${Date.now()}`);
+    }
+    // Update context so other components see the new image
+    userCtx?.setUser?.(updatedUser);
+    console.log("profile updated", updatedUser)
   } catch (error) {
     console.log(error)
   } 
@@ -68,16 +82,19 @@ export default function Home() {
             <div className="flex flex-col items-center -mt-16 mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100">
-                  {profileImage ? (
-                    <img
-                      src={profileImage}
+                  {imageSrc ? (
+                    <Image
+                      src={imageSrc}
                       alt="Profile"
+                      width={128}
+                      height={128}
                       className="w-full h-full object-cover"
+                      unoptimized
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-indigo-300 to-purple-400">
+                    <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-indigo-300 to-purple-400">
                       <span className="text-4xl text-white font-semibold">
-                        {session?.user?.name?.[0]?.toUpperCase() || "U"}
+                        {userCtx?.user?.name?.[0]?.toUpperCase() || session?.user?.name?.[0]?.toUpperCase() || "U"}
                       </span>
                     </div>
                   )}
