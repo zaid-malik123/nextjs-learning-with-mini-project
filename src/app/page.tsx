@@ -9,9 +9,13 @@ export default function Home() {
   const [profileImage, setProfileImage] = useState<string | null>(
     session?.user?.image || null
   );
+  const [backendImage, setBackendImage] = useState<File | null>(null)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    if(file){
+       setBackendImage(file)
+    }
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
